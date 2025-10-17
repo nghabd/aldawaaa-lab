@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Creators Central - Health Packages</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+```
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+    
+    .glass {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .package-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .package-card:hover {
+        transform: translateY(-5px);
+        border-color: #667eea;
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+    }
+    
+    .pulse-badge {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+    
+    .modal-backdrop {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    
+    .search-input {
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+</style>
+```
+
+</head>
+<body class="antialiased">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="glass rounded-2xl p-6 md:p-8 shadow-2xl">
+                <h1 class="text-3xl md:text-5xl font-extrabold mb-2">
+                    <span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                        Media Creators Central
+                    </span>
+                </h1>
+                <p class="text-gray-600 text-base md:text-lg">Premium Health Packages & Laboratory Services</p>
+            </div>
+        </header>
+
+```
+    <!-- Search Section -->
+    <div class="glass rounded-2xl p-6 shadow-xl mb-8">
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-4">
+            <div class="relative flex-1 w-full">
+                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search packages by name or tests..."
+                    class="search-input w-full pl-12 pr-4 py-3 rounded-full border-2 border-gray-200 focus:border-purple-500 focus:outline-none text-gray-700"
+                >
+            </div>
+            <button 
+                id="langToggle" 
+                class="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 whitespace-nowrap"
+            >
+                العربية
+            </button>
+        </div>
+        <div class="flex flex-wrap gap-2 justify-center">
+            <span class="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                <span>📋</span>
+                <span id="packageCount">10 Packages</span>
+            </span>
+            <span class="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                <span>✅</span>
+                <span>Up to 70% Off</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Packages Grid -->
+    <div id="packages" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"></div>
+
+    <!-- Footer -->
+    <footer class="glass rounded-2xl p-6 shadow-xl text-center">
+        <p class="text-gray-700 text-lg">
+            <span class="font-bold text-purple-600">NAGEH</span> 
+            <span class="text-gray-500">- Developer</span>
+        </p>
+        <p class="text-gray-500 text-sm mt-2">
+            <a href="mailto:dr_nageh@yahoo.com" class="hover:text-purple-600 transition-colors">dr_nageh@yahoo.com</a>
+        </p>
+    </footer>
+
+    <!-- Modal -->
+    <div id="modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
+        <div class="glass rounded-2xl p-6 md:p-8 shadow-2xl max-w-2xl w-full max-h-90vh overflow-y-auto">
+            <div class="flex justify-between items-start mb-6">
+                <h2 id="modalTitle" class="text-2xl md:text-3xl font-bold text-gray-800 pr-4"></h2>
+                <button id="closeBtn" class="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+                <div class="flex items-center gap-4 flex-wrap">
+                    <span id="modalPriceBefore" class="text-xl md:text-2xl text-red-500 line-through font-semibold"></span>
+                    <span id="modalPriceAfter" class="text-2xl md:text-3xl font-bold text-green-600"></span>
+                </div>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                    <p id="modalCode" class="text-blue-800 font-mono text-base md:text-lg"></p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <p class="text-sm text-purple-600 font-semibold mb-1">Duration</p>
+                        <p id="modalDuration" class="text-gray-800 font-medium"></p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-lg">
+                        <p class="text-sm text-orange-600 font-semibold mb-1">Fasting</p>
+                        <p id="modalFasting" class="text-gray-800 font-medium"></p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600 font-semibold mb-2">Tests Included:</p>
+                    <p id="modalTests" class="text-gray-700 leading-relaxed text-sm"></p>
+                </div>
+            </div>
+            
+            <button id="closeModalBtn" class="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const packagesData = [
+        {
+            id: 1000194,
+            name: { en: "Men's Health Package (Silver)", ar: "باقة صحة الرجال (فضي)" },
+            tests: { 
+                en: "CBC, FBS, Cholesterol, Triglycerides, HDL, LDL, Uric acid, Urea, Creatinine, AST, ALT, Iron, Ferritin, Calcium, Vit D, Vit B12, TSH, HBA1C, eGFR, Na, K, CL",
+                ar: "تعداد دم كامل، سكر صائم، كوليسترول، دهون ثلاثية، كوليسترول جيد، كوليسترول سيء، حمض البوليك، يوريا، كرياتينين، إنزيم الكبد AST، إنزيم الكبد ALT، حديد، فيريتين، كالسيوم، فيتامين D، فيتامين B12، هرمون الغدة الدرقية، سكر تراكمي، معدل الترشيح الكلوي، صوديوم، بوتاسيوم، كلور"
+            },
+            numberOfTests: 22,
+            priceBefore: 2330,
+            priceAfter: 349,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "10-12 Hours", ar: "10-12 ساعة" }
+        },
+        {
+            id: 1000195,
+            name: { en: "Women's Health Package (Silver)", ar: "باقة صحة المرأة (فضي)" },
+            tests: { 
+                en: "CBC, FBS, Cholesterol, Triglycerides, HDL, LDL, Uric acid, Urea, Creatinine, AST, ALT, Iron, Ferritin, Calcium, Vit D, Vit B12, Zinc, TSH, Mg, HBA1C, eGFR, Na, K, CL, Phosphorus",
+                ar: "تعداد دم كامل، سكر صائم، كوليسترول، دهون ثلاثية، كوليسترول جيد، كوليسترول سيء، حمض البوليك، يوريا، كرياتينين، إنزيم الكبد AST، إنزيم الكبد ALT، حديد، فيريتين، كالسيوم، فيتامين D، فيتامين B12، زنك، هرمون الغدة الدرقية، مغنيسيوم، سكر تراكمي، معدل الترشيح الكلوي، صوديوم، بوتاسيوم، كلور، فوسفور"
+            },
+            numberOfTests: 25,
+            priceBefore: 2680,
+            priceAfter: 349,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "10-12 Hours", ar: "10-12 ساعة" }
+        },
+        {
+            id: 1000196,
+            name: { en: "Children's Health Package", ar: "باقة صحة الأطفال" },
+            tests: { 
+                en: "CBC, Iron, Ferritin, Ca, Vitamin D, Stool analysis, AST, ALP, GGT, ALT, Creat, Urea, CRP, FBS, TSH",
+                ar: "تعداد دم كامل، حديد، فيريتين، كالسيوم، فيتامين D، تحليل براز، إنزيم الكبد AST، إنزيم ALP، إنزيم GGT، إنزيم الكبد ALT، كرياتينين، يوريا، بروتين C التفاعلي، سكر صائم، هرمون الغدة الدرقية"
+            },
+            numberOfTests: 15,
+            priceBefore: 1540,
+            priceAfter: 399,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "8-10 Hours", ar: "8-10 ساعات" }
+        },
+        {
+            id: 1000197,
+            name: { en: "Hair and Beauty Health Package", ar: "باقة صحة الشعر والجمال" },
+            tests: { 
+                en: "CBC, TSH, Vit D, Iron, Ferritin, Zinc, Vit B12, Magnesium",
+                ar: "تعداد دم كامل، هرمون الغدة الدرقية، فيتامين D، حديد، فيريتين، زنك، فيتامين B12، مغنيسيوم"
+            },
+            numberOfTests: 8,
+            priceBefore: 910,
+            priceAfter: 249,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "8-10 Hours", ar: "8-10 ساعات" }
+        },
+        {
+            id: 1000198,
+            name: { en: "Pre-Weight Loss Injections Package For Him", ar: "باقة ما قبل حقن إنقاص الوزن للرجال" },
+            tests: { 
+                en: "CBC, Cholesterol, Triglycerides, HDL, LDL, ALT, AST, Urea, Creatinine, Iron, Ferritin, Calcium, Vit D, Vit B12, TSH, HBA1C, Fasting Blood Sugar, Amylase, Lipase, Uric acid",
+                ar: "تعداد دم كامل، كوليسترول، دهون ثلاثية، كوليسترول جيد، كوليسترول سيء، إنزيم الكبد ALT، إنزيم الكبد AST، يوريا، كرياتينين، حديد، فيريتين، كالسيوم، فيتامين D، فيتامين B12، هرمون الغدة الدرقية، سكر تراكمي، سكر صائم، إنزيم الأميليز، إنزيم الليباز، حمض البوليك"
+            },
+            numberOfTests: 20,
+            priceBefore: 2200,
+            priceAfter: 299,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "10-12 Hours", ar: "10-12 ساعة" }
+        },
+        {
+            id: 1000202,
+            name: { en: "Pre-Weight Loss Injections Package For Her", ar: "باقة ما قبل حقن إنقاص الوزن للنساء" },
+            tests: { 
+                en: "CBC, Cholesterol, Triglycerides, HDL, LDL, ALT, AST, Urea, Creatinine, Iron, Ferritin, Calcium, Vit D, Vit B12, TSH, HBA1C, Fasting Blood Sugar, Amylase, Lipase, Uric acid, Pregnancy test",
+                ar: "تعداد دم كامل، كوليسترول، دهون ثلاثية، كوليسترول جيد، كوليسترول سيء، إنزيم الكبد ALT، إنزيم الكبد AST، يوريا، كرياتينين، حديد، فيريتين، كالسيوم، فيتامين D، فيتامين B12، هرمون الغدة الدرقية، سكر تراكمي، سكر صائم، إنزيم الأميليز، إنزيم الليباز، حمض البوليك، اختبار الحمل"
+            },
+            numberOfTests: 21,
+            priceBefore: 2200,
+            priceAfter: 299,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "10-12 Hours", ar: "10-12 ساعة" }
+        },
+        {
+            id: 1000203,
+            name: { en: "Post Weight Loss Injections Package", ar: "باقة ما بعد حقن إنقاص الوزن" },
+            tests: { 
+                en: "CBC, Cholesterol, Triglycerides, HDL, LDL, ALT, AST, GGT, Urea, Creatinine, Iron, Ferritin, Calcium, Vit D, Vit B12, TSH, Fasting Blood Sugar, Folic Acid, Amylase, Lipase, Magnesium, Na, K, CL, HBA1C",
+                ar: "تعداد دم كامل، كوليسترول، دهون ثلاثية، كوليسترول جيد، كوليسترول سيء، إنزيم الكبد ALT، إنزيم الكبد AST، إنزيم GGT، يوريا، كرياتينين، حديد، فيريتين، كالسيوم، فيتامين D، فيتامين B12، هرمون الغدة الدرقية، سكر صائم، حمض الفوليك، إنزيم الأميليز، إنزيم الليباز، مغنيسيوم، صوديوم، بوتاسيوم، كلور، سكر تراكمي"
+            },
+            numberOfTests: 25,
+            priceBefore: 2460,
+            priceAfter: 849,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "10-12 Hours", ar: "10-12 ساعة" }
+        },
+        {
+            id: 1000204,
+            name: { en: "Diabetes Early Detection", ar: "باقة الكشف المبكر عن السكري" },
+            tests: { 
+                en: "FBS, HBA1C, Cholesterol, Triglycerides, HDL, LDL",
+                ar: "سكر صائم، سكر تراكمي، كوليسترول، دهون ثلاثية، كوليسترول جيد، كوليسترول سيء"
+            },
+            numberOfTests: 6,
+            priceBefore: 480,
+            priceAfter: 199,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "10-12 Hours", ar: "10-12 ساعة" }
+        },
+        {
+            id: 1000205,
+            name: { en: "Anti-Hyperlipidemia Monitoring Package", ar: "باقة متابعة فرط الدهون" },
+            tests: { 
+                en: "Cholesterol, Triglycerides, HDL, LDL, AST, ALT, Urea, Creatinine",
+                ar: "كوليسترول، دهون ثلاثية، كوليسترول جيد، كوليسترول سيء، إنزيم الكبد AST، إنزيم الكبد ALT، يوريا، كرياتينين"
+            },
+            numberOfTests: 8,
+            priceBefore: 620,
+            priceAfter: 229,
+            duration: { en: "1-2 Days", ar: "1-2 أيام" },
+            fasting: { en: "10-12 Hours", ar: "10-12 ساعة" }
+        },
+        {
+            id: 1000206,
+            name: { en: "Vitamins Follow-Up Package (Silver)", ar: "باقة متابعة الفيتامينات (سيلفر)" },
+            tests: { 
+                en: "Vitamin D, Vitamin B12, Vitamin B9, Vitamin B2, Vitamin B6",
+                ar: "فيتامين D، فيتامين B12، فيتامين B9، فيتامين B2، فيتامين B6"
+            },
+            numberOfTests: 5,
+            priceBefore: 2200,
+            priceAfter: 259,
+            duration: { en: "7-8 Days", ar: "7-8 أيام" },
+            fasting: { en: "8-10 Hours", ar: "8-10 ساعات" }
+        }
+    ];
+
+    let isArabic = false;
+    let filteredData = packagesData.slice();
+
+    function renderPackages() {
+        const container = document.getElementById('packages');
+        container.innerHTML = '';
+        
+        filteredData.forEach(function(pkg) {
+            const discount = Math.round(((pkg.priceBefore - pkg.priceAfter) / pkg.priceBefore) * 100);
+            
+            const card = document.createElement('div');
+            card.className = 'package-card glass rounded-2xl p-6 shadow-lg cursor-pointer';
+            
+            card.innerHTML = '<div class="flex justify-between items-start mb-4">' +
+                '<h3 class="text-xl font-bold text-gray-800 leading-tight flex-1 pr-2">' +
+                (isArabic ? pkg.name.ar : pkg.name.en) +
+                '</h3>' +
+                '<span class="pulse-badge bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">' +
+                '-' + discount + '%' +
+                '</span>' +
+                '</div>' +
+                '<div class="space-y-3 mb-4">' +
+                '<div class="flex items-center gap-2">' +
+                '<span class="text-lg text-red-500 line-through">' + pkg.priceBefore + ' SAR</span>' +
+                '<span class="text-2xl font-bold text-green-600">' + pkg.priceAfter + ' SAR</span>' +
+                '</div>' +
+                '<div class="bg-blue-50 px-3 py-2 rounded-lg">' +
+                '<span class="text-blue-800 font-mono text-sm font-semibold">Code: ' + pkg.id + '</span>' +
+                '</div>' +
+                '<div class="flex items-center gap-2 text-gray-600">' +
+                '<span class="text-xl">📋</span>' +
+                '<span class="font-semibold">' + pkg.numberOfTests + ' Tests</span>' +
+                '</div>' +
+                '<div class="flex gap-2 text-sm flex-wrap">' +
+                '<span class="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full">' +
+                '⏱️ ' + (isArabic ? pkg.duration.ar : pkg.duration.en) +
+                '</span>' +
+                '<span class="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full">' +
+                '🍽️ ' + (isArabic ? pkg.fasting.ar : pkg.fasting.en) +
+                '</span>' +
+                '</div>' +
+                '</div>' +
+                '<button class="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">' +
+                (isArabic ? 'عرض التفاصيل' : 'View Details') +
+                '</button>';
+            
+            card.addEventListener('click', function() {
+                showModal(pkg.id);
+            });
+            
+            container.appendChild(card);
+        });
+        
+        document.getElementById('packageCount').textContent = filteredData.length + (isArabic ? ' باقات' : ' Packages');
+    }
+
+    function showModal(id) {
+        const pkg = packagesData.find(function(p) { return p.id === id; });
+        if (!pkg) return;
+        
+        document.getElementById('modalTitle').textContent = isArabic ? pkg.name.ar : pkg.name.en;
+        document.getElementById('modalPriceBefore').textContent = pkg.priceBefore + ' SAR';
+        document.getElementById('modalPriceAfter').textContent = pkg.priceAfter + ' SAR';
+        document.getElementById('modalCode').textContent = 'Code: ' + pkg.id;
+        document.getElementById('modalTests').textContent = isArabic ? pkg.tests.ar : pkg.tests.en;
+        document.getElementById('modalDuration').textContent = isArabic ? pkg.duration.ar : pkg.duration.en;
+        document.getElementById('modalFasting').textContent = isArabic ? pkg.fasting.ar : pkg.fasting.en;
+        
+        const modal = document.getElementById('modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = 'auto';
+    }
+
+    function toggleLanguage() {
+        isArabic = !isArabic;
+        const btn = document.getElementById('langToggle');
+        btn.textContent = isArabic ? 'English' : 'العربية';
+        document.getElementById('searchInput').placeholder = isArabic ? 
+            'ابحث في الباقات...' : 
+            'Search packages by name or tests...';
+        document.body.style.direction = isArabic ? 'rtl' : 'ltr';
+        renderPackages();
+    }
+
+    function filterPackages() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        
+        if (!search.trim()) {
+            filteredData = packagesData.slice();
+        } else {
+            filteredData = packagesData.filter(function(pkg) {
+                const nameEn = pkg.name.en.toLowerCase();
+                const nameAr = pkg.name.ar.toLowerCase();
+                const testsEn = pkg.tests.en.toLowerCase();
+                const testsAr = pkg.tests.ar.toLowerCase();
+                const code = pkg.id.toString();
+                
+                return nameEn.indexOf(search) !== -1 || 
+                       nameAr.indexOf(search) !== -1 || 
+                       testsEn.indexOf(search) !== -1 || 
+                       testsAr.indexOf(search) !== -1 ||
+                       code.indexOf(search) !== -1;
+            });
+        }
+        
+        renderPackages();
+    }
+
+    document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+    document.getElementById('searchInput').addEventListener('input', filterPackages);
+    document.getElementById('closeBtn').addEventListener('click', closeModal);
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    
+    document.getElementById('modal').addEventListener('click', function(e) {
+        if (e.target.id === 'modal') {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    renderPackages();
+</script>
+```
+
+</body>
+</html>
